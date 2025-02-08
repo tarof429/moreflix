@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <title>Moreflix!</title>
+</head>
+<body>
+    <header>
+        <h1 class="title">Moreflix</h1>
+    </header>
+
+    <table>
+        <th>Title</th><th>Year</th><th>Runtime</th><th>Genres</th><th>Director</th><th>Actors</th><th>Plot</th>
+        {% for movie in data %}
+            <tr>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.year }}</td>
+                <td>{{ movie.runtime }}</td>
+                <td>{{ movie.genres|join(' ')}}</td>
+                <td>{{ movie.director }}</td>
+                <td>{{ movie.actors }}</td>
+                <td>{{ movie.plot }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+
+</body>
+
+</html>

@@ -1,18 +1,31 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from pymongo import MongoClient
 import os
 import json
 
-dbname='moreflix'
 moviesJSON = 'movies.json'
 
 app = Flask(__name__)
 
-@app.route('/')
-def hello_world():
-    return 'Hello World'
+def get_all_movies():
+    mongodbUrl = os.environ['MONGODB_URL']
 
-@app.route('/createdb')
+    client = MongoClient(mongodbUrl)
+
+    moreflix = client['moreflix']
+    movies = moreflix['movies']
+    data = list(movies.find({}, {"_id": 0})) # Remove IDs
+     
+    return data
+
+@app.route('/')
+def get_all_movies_ui():
+    return render_template('index.html', data=get_all_movies())
+
+@app.route('/api/v1/findall')
+def get_all_movies_api():
+    return jsonify(get_all_movies())
+
 def create_db():
     mongodbUrl = os.environ['MONGODB_URL']
 
@@ -33,30 +46,13 @@ def create_db():
 
     except Exception as e:
         print(e)
-    
     return databaseNames
 
-@app.route('/findall')
-def findall():
-    mongodbUrl = os.environ['MONGODB_URL']
+@app.route('/api/v1/createdb')
+def create_db_api():
+    return create_db()
 
-    client = MongoClient(mongodbUrl)
-
-    moreflix = client['moreflix']
-    movies = moreflix['movies']
-    data = list(movies.find({}, {"_id": 0})) # Remove IDs
-     
-    print(type(data))
-
-    for d in data:
-        print(d)
-
-    return jsonify(data)
-
-@app.route('/findbytitle')
-def findByTitle():
-    title = request.args.get('title')
-
+def find_by_title(title):
     mongodbUrl = os.environ['MONGODB_URL']
 
     client = MongoClient(mongodbUrl)
@@ -66,10 +62,13 @@ def findByTitle():
     query = {"title": {"$regex": title}}
     data = list(movies.find(query, {"_id": 0})) # Remove IDs
 
-    print(type(data))
+    return data
 
-    for d in data:
-        print(d)
+@app.route('/api/v1/findbytitle')
+def find_by_title_api():
+    title = request.args.get('title')
+
+    data = find_by_title(title)
 
     return jsonify(data)
 
