@@ -2,15 +2,28 @@ from flask import Flask, jsonify, request, render_template
 from pymongo import MongoClient
 import os
 import json
+import urllib
 
 moviesJSON = 'movies.json'
 
 app = Flask(__name__)
 
-def get_all_movies():
-    mongodbUrl = os.environ['MONGODB_URL']
+def get_url():
+    username = urllib.parse.quote_plus(os.environ['MONGODB_USER'])
+    password = urllib.parse.quote_plus(os.environ['MONGODB_PASSWORD'])
+    server = urllib.parse.quote_plus(os.environ['MONGODB_SERVER'])
+    port = urllib.parse.quote_plus(os.environ['MONGODB_PORT'])
 
-    client = MongoClient(mongodbUrl)
+    url = 'mongodb://{0}:{1}@{2}:{3}/'.format(username, password, server, port)
+
+    print(url)
+
+    return url
+
+def get_all_movies():
+    url = get_url()
+
+    client = MongoClient(url)
 
     moreflix = client['moreflix']
     movies = moreflix['movies']
@@ -22,14 +35,19 @@ def get_all_movies():
 def get_all_movies_ui():
     return render_template('index.html', data=get_all_movies())
 
+@ app.route('/test')
+def test():
+    print("Yup, I'm here")
+    return "test"
+
 @app.route('/api/v1/findall')
 def get_all_movies_api():
     return jsonify(get_all_movies())
 
 def create_db():
-    mongodbUrl = os.environ['MONGODB_URL']
+    url = get_url()
 
-    client = MongoClient(mongodbUrl)
+    client = MongoClient(url)
 
     databaseNames = ''
 
@@ -53,9 +71,9 @@ def create_db_api():
     return create_db()
 
 def find_by_title(title):
-    mongodbUrl = os.environ['MONGODB_URL']
+    url = get_url()
 
-    client = MongoClient(mongodbUrl)
+    client = MongoClient(url)
 
     moreflix = client['moreflix']
     movies = moreflix['movies']

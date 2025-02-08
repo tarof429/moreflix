@@ -24,11 +24,12 @@ services:
   moreflix:
     image: moreflix:1.0
     ports:
-      - 5000:5000
+      - 5000:8000
     environment:
-      FLASK_ENV: development
-      FLASK_APP: server
-      MONGODB_URL: "mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo:27017/"
+      MONGODB_USER: ${MONGO_ROOT_USERNAME}
+      MONGODB_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGODB_SERVER: ${MONGODB_SERVER}
+      MONGODB_PORT: ${MONGODB_PORT}
     depends_on:
       - mongo
 volumes:
