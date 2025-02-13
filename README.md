@@ -5,6 +5,8 @@
 
 This containerized web application displays a list of movies stored in MongoDB.
 
+<img src="moreflix.png"/>
+
 ## Build instructions
 
 While developing this application, it can be helpful to only bring up mongo and mongo-express. To do this:
@@ -32,7 +34,7 @@ python3 -m pip install -r requirements.txt
 
 4. Run the mongo and mongo-express containers. Hint: see the docker-compose file.
 
-4. Run the application.
+5. Run the application.
 
 ```sh
 export MONGODB_USER=root
@@ -40,7 +42,13 @@ export MONGODB_PASSWORD=secret
 export MONGODB_SERVER=localhost
 export MONGODB_PORT=27017
 
-flask run --host=0.0.0.0
+gunicorn -b 0.0.0.0:8000 server:app
+```
+
+6. Populate the database
+
+```sh
+curl http://localhost:8000/api/v1/createdb
 ```
 
 ## Running the application (production)
