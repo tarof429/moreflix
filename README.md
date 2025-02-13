@@ -34,21 +34,15 @@ python3 -m pip install -r requirements.txt
 
 4. Run the mongo and mongo-express containers. Hint: see the docker-compose file.
 
-5. Run the application.
+5. To run the application with flask:
 
 ```sh
+. ./moreflix-env/bin/activate
 export MONGODB_USER=root
 export MONGODB_PASSWORD=secret
 export MONGODB_SERVER=localhost
 export MONGODB_PORT=27017
-
-gunicorn -b 0.0.0.0:8000 server:app
-```
-
-6. Populate the database
-
-```sh
-curl http://localhost:8000/api/v1/createdb
+flask --app moreflix run --debug
 ```
 
 ## Running the application (production)
@@ -61,10 +55,12 @@ With all 3 services in the docker-compose file:
 docker compose up
 ```
 
-2. Populate the database
+2. Populate the database (optional)
+
+The moreflix application will automatically create the database on startup. However, you can still recreate it by issuing a curl statement.
 
 ```sh
-curl http://<ip>:5000/api/v1/createdb
+curl http://localhost:5000/api/v1/createdb
 ```
 
-3. Point your browser to http://<ip>:5000
+3. Point your browser to http://localhost:5000
