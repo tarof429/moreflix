@@ -5,7 +5,7 @@ import json
 
 moviesJSON = 'movies.json'
 
-def get_url():
+def get_client():
     username = urllib.parse.quote_plus(os.environ['MONGODB_USER'])
     password = urllib.parse.quote_plus(os.environ['MONGODB_PASSWORD'])
     server = urllib.parse.quote_plus(os.environ['MONGODB_SERVER'])
@@ -13,24 +13,27 @@ def get_url():
 
     url = 'mongodb://{0}:{1}@{2}:{3}/'.format(username, password, server, port)
 
-    print(url)
-
-    return url
-
-def init_app(app):
-    url = get_url()
-    
     client = MongoClient(url)
-    
+
+    return client
+
+def close_client(e=None):
+    client = get_client()
+    client.close()
+
+def init_db():
+    client = get_client()
+
     database_name = 'moreflix'
     
     if not database_name in client.list_database_names():
-        create_db()
+        return create_db()
+
+def init_app(app):
+    app.teardown_appcontext(close_client)
 
 def get_all_movies():
-    url = get_url()
-
-    client = MongoClient(url)
+    client = get_client()
 
     moreflix = client['moreflix']
     movies = moreflix['movies']
@@ -39,9 +42,7 @@ def get_all_movies():
     return data
 
 def create_db():
-    url = get_url()
-
-    client = MongoClient(url)
+    client = get_client()
 
     databaseNames = ''
 
@@ -61,9 +62,7 @@ def create_db():
     return databaseNames
 
 def find_by_title(title):
-    url = get_url()
-
-    client = MongoClient(url)
+    client = get_client()
 
     moreflix = client['moreflix']
     movies = moreflix['movies']

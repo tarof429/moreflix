@@ -1,10 +1,12 @@
 from flask import Flask, jsonify, request, render_template
-from . import db 
+
+from . import db
 
 def create_app():
     app = Flask(__name__)
 
     db.init_app(app)
+    db.init_db() // optional; # we could do this step manually
 
     @app.route('/')
     def get_all_movies_ui():

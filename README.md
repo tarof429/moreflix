@@ -37,7 +37,7 @@ python3 -m pip install -r requirements.txt
 5. To run the application with flask:
 
 ```sh
-. ./moreflix-env/bin/activate
+. ./moreflix-venv/bin/activate
 export MONGODB_USER=root
 export MONGODB_PASSWORD=secret
 export MONGODB_SERVER=localhost
