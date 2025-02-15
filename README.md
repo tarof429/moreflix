@@ -55,6 +55,10 @@ With all 3 services in the docker-compose file:
 docker compose up
 ```
 
+Be careful that you do NOT override variables define in the `.env` file. Doing so will cause connection issues that can be difficult to troubleshoot. If in doubt, SSH into the moreflix container to see what environment variables are being set.
+
+If you want to toggle between development mode and production mode, use separate windows.
+
 2. Populate the database (optional)
 
 The moreflix application will automatically create the database on startup. However, you can still recreate it by issuing a curl statement.

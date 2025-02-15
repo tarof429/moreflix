@@ -4,6 +4,8 @@ import os
 import json
 
 moviesJSON = 'movies.json'
+database_name = 'moreflix'
+collection_name = 'movies'
 
 def get_client():
     username = urllib.parse.quote_plus(os.environ['MONGODB_USER'])
@@ -12,8 +14,6 @@ def get_client():
     port = urllib.parse.quote_plus(os.environ['MONGODB_PORT'])
 
     url = 'mongodb://{0}:{1}@{2}:{3}/'.format(username, password, server, port)
-
-    print('URL: {0}'.format(url))
 
     client = MongoClient(url)
 
@@ -25,8 +25,6 @@ def close_client(e=None):
 
 def init_db():
     client = get_client()
-
-    database_name = 'moreflix'
     
     if not database_name in client.list_database_names():
         return create_db()
@@ -37,8 +35,8 @@ def init_app(app):
 def get_all_movies():
     client = get_client()
 
-    moreflix = client['moreflix']
-    movies = moreflix['movies']
+    moreflix = client[database_name]
+    movies = moreflix[collection_name]
     data = list(movies.find({}, {"_id": 0})) # Remove IDs
      
     return data
@@ -49,8 +47,8 @@ def create_db():
     databaseNames = ''
 
     try:
-        moreflix = client['moreflix']
-        movies = moreflix['movies']
+        moreflix = client[database_name]
+        movies = moreflix[collection_name]
 
         with open(moviesJSON, 'r') as f:
             data = json.load(f)
@@ -66,8 +64,9 @@ def create_db():
 def find_by_title(title):
     client = get_client()
 
-    moreflix = client['moreflix']
-    movies = moreflix['movies']
+    moreflix = client[database_name]
+    movies = moreflix[collection_name]
+
     query = {"title": {"$regex": title}}
     data = list(movies.find(query, {"_id": 0})) # Remove IDs
 

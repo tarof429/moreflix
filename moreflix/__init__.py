@@ -13,8 +13,10 @@ def create_app():
     #db.init_db() # optional; we could do this step manually
 
     @app.route('/')
-    def get_all_movies_ui():
-        return render_template('index.html', data=db.get_all_movies())
+    def index():
+        movies = db.get_all_movies()
+
+        return render_template('index.html', movies=movies)
 
     @ app.route('/test')
     def test():
@@ -23,15 +25,17 @@ def create_app():
 
     @app.route('/api/v1/findall')
     def get_all_movies_api():
-        return jsonify(db.get_all_movies())
+        movies = db.get_all_movies()
+
+        return jsonify(movies)
         
     @app.route('/api/v1/findbytitle')
     def find_by_title_api():
         title = request.args.get('title')
 
-        data = db.find_by_title(title)
+        movies = db.find_by_title(title)
 
-        return jsonify(data)
+        return jsonify(movies)
 
     @app.route('/api/v1/createdb')
     def create_db_api():
