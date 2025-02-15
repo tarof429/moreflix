@@ -62,9 +62,3 @@ The moreflix application will automatically create the database on startup. Howe
 ```sh
 curl http://localhost:5000/api/v1/createdb
 ```
-
-## Testing
-
-Run `pytest` to run an integration test.
-
-3. Point your browser to http://localhost:5000

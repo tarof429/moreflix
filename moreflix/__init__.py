@@ -1,12 +1,16 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask
+from flask import jsonify
+from flask import request
+from flask import render_template
 
 from . import db
 
+# moreflix application factory
 def create_app():
     app = Flask(__name__)
 
     db.init_app(app)
-    db.init_db() // optional; # we could do this step manually
+    db.init_db() # optional; we could do this step manually
 
     @app.route('/')
     def get_all_movies_ui():
