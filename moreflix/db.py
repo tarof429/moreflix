@@ -13,6 +13,8 @@ def get_client():
 
     url = 'mongodb://{0}:{1}@{2}:{3}/'.format(username, password, server, port)
 
+    print('URL: {0}'.format(url))
+
     client = MongoClient(url)
 
     return client
