@@ -5,9 +5,24 @@ pipeline {
 
 
     stages {
-        stage('Hello') {
+        stage('Init libraries') {
             steps {
-                sh 'docker run hello-world'
+                script {
+                    gv = load "build.groovy"
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    gv.buildImage()
+            }
+        }
+
+        stage('Push docker image') {
+            steps {
+                echo "Deploy..."
             }
         }
     }
