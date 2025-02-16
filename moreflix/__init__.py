@@ -18,7 +18,7 @@ def create_app():
 
         return render_template('index.html', movies=movies)
 
-    @ app.route('/test')
+    @app.route('/test')
     def test():
         print("Yup, I'm here")
         return "test"
