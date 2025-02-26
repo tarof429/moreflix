@@ -1,0 +1,5 @@
+__pycache__/
+moreflix-venv
+dist/
+moreflix.egg-info
+moreflix/__pycache__/

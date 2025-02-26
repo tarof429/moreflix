@@ -1,0 +1,7 @@
+__pycache__/
+moreflix/__pycache__
+moreflix-venv
+docker-compose.yml
+Dockerfile
+README.md
+.git

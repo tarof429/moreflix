@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#movies').DataTable();
+        });
+    </script>
+
+    <title>Moreflix!</title>
+</head>
+
+<body>
+
+    <header>
+        <h1 class="title">Moreflix</h1>
+    </header>
+
+    <div class="container mt-4">
+        <table id="movies" class="table table-striped table-bordered">
+            <thead class="table-striped">
+                <tr>
+                    <th>Title</th>
+                    <th>Year</th>
+                    <th>Runtime</th>
+                    <th>Genres</th>
+                    <th>Director</th>
+                    <th>Actors</th>
+                    <th>Plot</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movie in movies %}
+                <tr>
+                    <td>{{ movie.title }}</td>
+                    <td>{{ movie.year }}</td>
+                    <td>{{ movie.runtime }}</td>
+                    <td>{{ movie.genres|join(' ')}}</td>
+                    <td>{{ movie.director }}</td>
+                    <td>{{ movie.actors }}</td>
+                    <td>{{ movie.plot }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+</body>
+
+</html>
