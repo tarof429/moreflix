@@ -3,3 +3,4 @@ moreflix-venv
 dist/
 moreflix.egg-info
 moreflix/__pycache__/
+tests/__pycache__/

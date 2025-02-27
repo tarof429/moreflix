@@ -2,7 +2,19 @@
 
 ## Introduction
 
-This containerized web application displays a list of movies stored in MongoDB.
+This containerized web application displays a list of movies stored in MongoDB. This project implements a CI/CD continuous delivery pipeline using Jenkins and shared-libraries, and integrates well with multi-branch pipeline jobs.
+
+Below is a screenshot of the application. It's pretty simple...
+
+<img src="images/moreflix.png"/>
+
+Below is a diagram of the application. Basically the application is deployed as services that are linked together through a docker network. Storage is persisted using a docker volume.
+
+<img src="images/moreflix-diagram.png"/>
+
+Python and specifically Flask is used to implement the application.
+
+The Jenkinsfile uses a shared library, which you can find at https://github.com/tarof429/moreflix-shared-lib.
 
 # Development
 
@@ -64,7 +76,7 @@ In this environment, moreflix will be brought up as a service. Take care that yo
 2. Build the moreflix image.
 
 ```sh
-docker build -t tarof429/moreflix:1.0 .
+docker build -t tarof429/moreflix:latest .
 ```
 
 3. If the moreflix service was commented out in docker-compose.yml, uncomment it.
@@ -91,3 +103,33 @@ curl http://localhost:5000/api/v1/dropdb
 curl http://localhost:5000/api/v1/createdb
 ```
 
+## Testing
+
+First build the docker container with the integration tests. Compared to the regular Dockerfile, this Dockerfile does NOT include pycurl.
+
+```sh
+docker build -t moreflix-test -f Dockerfile-test .
+```
+
+Next start the profiles except for the tests.
+
+```sh
+COMPOSE_PROFILES=db,app docker compose up -d
+```
+
+Run the tests.
+
+```sh
+docker compose run test
+```
+
+Stop the containers.
+
+```sh
+COMPOSE_PROFILES=db,app docker compose down
+```
+
+## Todo
+
+- The shared library function `updateVersion()` has AI generated code which I augmented to account for a small bug. I chose it because 1) it works and 2) it has some error handling. The code is fairly complex and it might be nice to come up with something simpler. 
+- It might be nice to roll the two Dockerfiles into one. This design decision arose because pytest and pycurl, which are used by the tests, are not installed in the production container. 

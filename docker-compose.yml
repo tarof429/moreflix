@@ -35,5 +35,11 @@ services:
       MONGODB_PORT: ${MONGODB_PORT}
     depends_on:
       - mongo
+  test:
+    image: moreflix-test:latest
+    build:
+      context: .
+      dockerfile: Dockerfile-test
+    profiles: [test]
 volumes:
   moreflix:
