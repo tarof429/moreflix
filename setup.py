@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="moreflix",
-    version='0.1.8',
+    version='0.1.9',
     author="Taro Fukunaga",
     author_email="taro@example.com",
     description="moreflix",
