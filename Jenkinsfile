@@ -4,6 +4,7 @@
 import com.github.moreflix.Helper
 
 def helper
+def testFailed = 0
 
 pipeline {
     agent any
@@ -58,8 +59,6 @@ pipeline {
         stage('Run tests') {
             steps {
                 script {
-                    def testFailed = 0
-
                     helper.startDockerCompose("${env.LATEST_IMAGE_NAME}", "db,app")
                    
                     testFailed = helper.runDockerCompose("dummy", "test")
