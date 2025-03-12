@@ -24,7 +24,7 @@ services:
     depends_on:
       - mongo
   moreflix:
-    image: tarof429/moreflix:latest
+    image: ${IMAGE}
     profiles: [app]
     ports:
       - 5000:5000

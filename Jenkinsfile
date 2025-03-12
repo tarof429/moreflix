@@ -1,12 +1,16 @@
 #!/usr/bin/env groovy
 
-@Library('moreflix-shared-library')_
+@Library('moreflix-shared-library@main') _
+import com.github.moreflix.Helper
 
-def version
+def helper
 
 pipeline {
-    agent {
-        label 'jenkins-node'
+    agent any
+
+    environment {
+        IMAGE_PREFIX = 'tarof429/moreflix'
+        LATEST_IMAGE_NAME = "${env.IMAGE_PREFIX}:latest"
     }
 
     options {
@@ -17,7 +21,12 @@ pipeline {
         stage('Init') {
             steps {
                 script {
-                    removeDockerCompose('db,app')
+                    helper = new Helper(this)
+
+                    helper.setSimulator(false)
+                    helper.setServerIP('44.245.216.73')
+
+                    helper.stopAndRemoveOrphans()
                 }
             }
         }
@@ -25,16 +34,15 @@ pipeline {
         stage('Get version') {
             steps {
                 script {
-                    version = getVersion('setup.py')
-                    echo("Version ${version}")
+                    env.VERSION = helper.getVersion('setup.py')
+                    echo("Version: ${env.VERSION}")
                 }
             }
         }
         stage('Build docker image') {
             steps {
                 script {
-                    buildDockerImage("tarof429/moreflix:${version}")
-                    tagDockerImage("tarof429/moreflix:${version}", 'tarof429/moreflix:latest')
+                    helper.buildDockerImage("${env.LATEST_IMAGE_NAME}")
                 }
             }
         }
@@ -42,7 +50,7 @@ pipeline {
         stage('Build test docker image') {
             steps {
                 script {
-                    buildDockerImage('moreflix-test', 'Dockerfile-test')
+                    helper.buildDockerImage('moreflix-test', 'Dockerfile-test')
                 }
             }
         }
@@ -50,11 +58,13 @@ pipeline {
         stage('Run tests') {
             steps {
                 script {
-                    startDockerCompose('db,app')
+                    def testFailed = 0
+
+                    helper.startDockerCompose("${env.LATEST_IMAGE_NAME}", "db,app")
                    
-                    testFailed = runDockerCompose('test')
+                    testFailed = helper.runDockerCompose("dummy", "test")
                     
-                    stopDockerCompose('db,app')
+                    helper.stopDockerCompose("dummy", "db,app")
 
                     echo "${testFailed}"
 
@@ -74,8 +84,25 @@ pipeline {
             }
             steps {
                 script {
-                    pushDockerTag('dockerhub', "tarof429/moreflix:latest")
-                    pushDockerTag('dockerhub', "tarof429/moreflix:${version}")
+                    env.IMAGE_NAME = "${env.IMAGE_PREFIX}:${env.VERSION}-${env.BUILD_NUMBER}"
+
+                    helper.tagDockerImage("${env.LATEST_IMAGE_NAME}", "${env.IMAGE_NAME}")
+
+                    helper.pushDockerTag('dockerhub', "${env.LATEST_IMAGE_NAME}")
+                    helper.pushDockerTag('dockerhub', "${env.IMAGE_NAME}")
+                }
+            }
+        }
+
+        stage('Deploy image to AWS') {
+            when {
+                expression {
+                    env.BRANCH_NAME == 'main' && testFailed == 0
+                }
+            }
+            steps {
+                script {
+                    helper.deployToAWS("${env.IMAGE_NAME}")
                 }
             }
         }
@@ -88,7 +115,7 @@ pipeline {
             }
             steps {
                 script {
-                    updateVersion('setup.py')
+                    helper.updateVersion('setup.py')
                 }
             }
         }
@@ -101,7 +128,7 @@ pipeline {
             }
             steps {
                 script {
-                    githubCommit('moreflix-token3', "https://github.com/tarof429/moreflix.git")
+                    helper.githubCommit('moreflix-token', "https://github.com/tarof429/moreflix.git")
                 }
             }
         }
