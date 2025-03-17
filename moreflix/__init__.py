@@ -3,6 +3,7 @@ from flask_session import Session
 from redis import Redis
 import urllib
 import os
+import secrets
 
 from moreflix.api.api import api_bp
 from moreflix.movies.movies import movies_bp
@@ -13,7 +14,7 @@ from moreflix.models import init_app, get_user, users
 
 def create_app():
     app = Flask(__name__)
-    app.secret_key =  urllib.parse.quote_plus(os.environ['FLASK_SECRET_KEY'])
+    app.secret_key = secrets.token_bytes(32)
     redis_server = urllib.parse.quote_plus(os.environ['REDIS_SERVER'])
     redis_port = urllib.parse.quote_plus(os.environ['REDIS_PORT'])
 
