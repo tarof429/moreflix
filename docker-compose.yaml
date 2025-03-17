@@ -1,4 +1,10 @@
 services:
+  redis:
+    image: redis:7.4.2-alpine
+    profiles: [db]
+    restart: always
+    ports:
+      - 6379:6379
   mongo:
     image: mongo:8.0.4
     profiles: [db]
@@ -33,8 +39,12 @@ services:
       MONGODB_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGODB_SERVER: ${MONGODB_SERVER}
       MONGODB_PORT: ${MONGODB_PORT}
+      REDIS_SERVER: ${REDIS_SERVER}
+      REDIS_PORT: ${REDIS_PORT}
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY}
     depends_on:
       - mongo
+      - redis
   test:
     image: moreflix-test:latest
     build:

@@ -11,4 +11,4 @@ COPY . .
 ARG SERVER moreflix
 ARG PORT 5000
 
-CMD ["pytest", "-m", "integration"]
+CMD ["pytest"]

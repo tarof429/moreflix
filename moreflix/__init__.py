@@ -1,36 +1,40 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask
+from flask_session import Session
+from redis import Redis
+import urllib
+import os
 
-from . import db
+from moreflix.api.api import api_bp
+from moreflix.movies.movies import movies_bp
+from moreflix.auth.auth import auth_bp
+from moreflix.welcome.welcome import welcome_bp
+from moreflix.extensions import login_manager
+from moreflix.models import init_app, get_user, users
 
-# Application factory
 def create_app():
     app = Flask(__name__)
+    app.secret_key =  urllib.parse.quote_plus(os.environ['FLASK_SECRET_KEY'])
+    redis_server = urllib.parse.quote_plus(os.environ['REDIS_SERVER'])
+    redis_port = urllib.parse.quote_plus(os.environ['REDIS_PORT'])
 
-    # Register the app
-    db.init_app(app)
+    app.config['SESSION_TYPE'] = 'redis'
+    app.config['SESSION_REDIS'] = Redis.from_url('redis://{0}:{1}'.format(redis_server, redis_port))
+    Session(app)
+    
+    init_app(app)
 
-    @app.route('/test')
-    def test():
-        return "test"
+    login_manager.init_app(app)
 
-    @app.route('/')
-    def index():
-        movies = db.get_all_movies()
-
-        return render_template('index.html', movies=movies)
-
-    @app.route('/api/v1/dropdb')
-    def drop_all_movies():
-       return jsonify(db.drop_db())
-
-    @app.route('/api/v1/createdb')
-    def create_db_api():
-        return db.create_db()
-
-    @app.route('/api/v1/findall')
-    def get_all_movies_api():
-        movies = db.get_all_movies()
-
-        return jsonify(movies)
-
+    app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(movies_bp, url_prefix='/movies')
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(welcome_bp, url_prefix='/')
+    
+    @login_manager.user_loader
+    def load_user(id):
+        for user in users.values():
+            if user.id == int(id):
+                return user
+        return None
+    
     return app

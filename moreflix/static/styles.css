@@ -5,21 +5,20 @@ body {
 }
 
 header {
-    background-color: black;
+    background-color: white;
     height: 40px;
     width: 100%;
     opacity: .9;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 header h1.title {
     margin: 0;
     font-size: 1.7em;
-    color: #dddddd;
+    color: black;
     text-transform: uppercase;
-    float: left;
+    text-align: center;
     padding-left: 10px;
-    padding-top: 10px;
 }
 
 table,
@@ -46,4 +45,23 @@ th {
     font-weight: bold;
     font-size: 14px;
     border-right: 1px solid #aaaaaa;
+}
+
+div.loginform {
+    padding: 40px;
+    text-align: center;
+}
+
+button.login {
+    margin: 20px;
+}
+
+ol.mybreadcrumb {
+    padding-top: 10px;
+    padding-right: 30px;
+}
+
+h2.welcome {
+    text-align: center;
+    padding-top: 10px;
 }

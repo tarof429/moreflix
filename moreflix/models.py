@@ -1,11 +1,23 @@
-import urllib
+from flask_login import UserMixin
 from pymongo import MongoClient
+import urllib
 import json
 import os
 
 moviesJSON = 'movies.json'
 database_name = 'moreflix'
 collection_name = 'movies'
+
+class User(UserMixin):
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
+
+users = { "admin": User(1, "admin", "password" )}
+
+def get_user(username):
+    return users.get(username)
 
 def get_client():
     username = urllib.parse.quote_plus(os.environ['MONGODB_USER'])

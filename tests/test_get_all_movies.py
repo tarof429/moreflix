@@ -7,21 +7,20 @@ from io import BytesIO
 def before():
 
     curl = pycurl.Curl()
-    curl.setopt(pycurl.URL, 'http://moreflix:5000/api/v1/dropdb')
+    curl.setopt(pycurl.URL, 'http://moreflix:5000/api/dropdb')
 
     curl.perform()
     curl.close()
 
-@pytest.mark.integration
 def test_get_all_movies():
     buffer = BytesIO()
 
     curl = pycurl.Curl()
 
-    curl.setopt(pycurl.URL, 'http://moreflix:5000/api/v1/createdb')
+    curl.setopt(pycurl.URL, 'http://moreflix:5000/api/createdb')
     curl.perform()
     
-    curl.setopt(pycurl.URL, 'http://moreflix:5000/api/v1/findall')
+    curl.setopt(pycurl.URL, 'http://moreflix:5000/api/findall')
     curl.setopt(pycurl.WRITEDATA, buffer)
     curl.perform()
 
